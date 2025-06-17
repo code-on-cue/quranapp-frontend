@@ -54,4 +54,15 @@ export const fetchData = async (endpoint, params = {}) => {
   }
 };
 
+
+export const postData = async (endpoint, data) => {
+  try {
+    const response = await apiService.post(endpoint, data);
+    return response;
+  } catch (error) {
+    console.error("Error posting data:", error);
+    throw error;
+  }
+};
+
 export default apiService;

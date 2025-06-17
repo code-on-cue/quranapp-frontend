@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { fetchData } from "../networks/apiService";
 import { useNavigate } from "react-router-dom";
+import { saveSearchHistory } from "../utils/save-history";
+import { highlightKeywords } from "../utils/highlight";
 
 export function SearchPage() {
   const navigate = useNavigate();
@@ -9,7 +11,7 @@ export function SearchPage() {
   const [errorMessage, setErrorMessage] = useState("");
 
   // Debounce the search query to avoid too many API calls
-  const debouncedSearchQuery = useDebounce(searchQuery, 300);
+  const debouncedSearchQuery = useDebounce(searchQuery, 1000);
 
   const fetchSuratList = async () => {
     console.log("Fetching surat list with query:", debouncedSearchQuery);
@@ -20,12 +22,21 @@ export function SearchPage() {
         return;
       }
 
+      saveSearchHistory(debouncedSearchQuery);
+
       const response = await fetchData("/semantic_search", {
         params: {
           limit: 100, // Fetching a reasonable number of surahs
         },
         query: debouncedSearchQuery,
       });
+
+      // mapping the response to match the expected structure
+      response.results = response.results.map((item) => ({
+        ...item,
+        Tafsir_Bersih: item.Terjemahan,
+      }));
+
       setSuratList(response.results || []);
     } catch (error) {
       setErrorMessage(
@@ -77,11 +88,12 @@ export function SearchPage() {
                 {surat.Teks_Arab}
               </p>
 
-              <p className="text-sm text-gray-600 italic">
-                {surat.Tafsir_Bersih.length > 300
-                  ? surat.Tafsir_Bersih.substring(0, 300) + "..."
-                  : surat.Tafsir_Bersih}
-              </p>
+              <p
+                className="text-sm text-gray-600 italic"
+                dangerouslySetInnerHTML={{
+                  __html: highlightKeywords(surat.Tafsir_Bersih, [searchQuery]),
+                }}
+              ></p>
 
               <div className="mt-4 flex justify-end">
                 <button

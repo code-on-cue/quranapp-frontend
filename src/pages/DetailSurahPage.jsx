@@ -20,6 +20,9 @@ export default function DetailSurahPage() {
       setLoading(true);
       const response = await fetchData(`/surah_detail/${surahNumber}`);
       if (response && response.surah_detail) {
+        response.surah_detail.forEach((ayat) => {
+          ayat.Tafsir_Bersih = ayat.Terjemahan || "";
+        }); 
         setData(response.surah_detail);
       } else {
         throw new Error("Data surah tidak ditemukan");

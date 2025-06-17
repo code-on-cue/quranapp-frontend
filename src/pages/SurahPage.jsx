@@ -14,6 +14,8 @@ export function SurahPage() {
         const response = await fetchData("/list_surah", {
           params: { limit: 114 },
         });
+        // mapping the response to match the expected structure
+        response.Tafsir_Bersih = response.Terjemahan;
         setSuratList(response.surah_list || []);
       } catch (error) {
         console.error("Error fetching surat list:", error);
