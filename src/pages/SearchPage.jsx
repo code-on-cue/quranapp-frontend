@@ -35,7 +35,13 @@ export function SearchPage() {
       response.results = response.results.map((item) => ({
         ...item,
         Tafsir_Bersih: item.Terjemahan,
+        similarity: item.similarity?.toFixed(3), // opsional
       }));
+
+      // Filter if similarity 0.000
+      response.results = response.results.filter((item) => {
+        return item.similarity > 0.0;
+      });
 
       setSuratList(response.results || []);
     } catch (error) {
@@ -82,16 +88,42 @@ export function SearchPage() {
                 <span className="text-xs text-gray-500">
                   Ayat ke-{surat.Ayat}
                 </span>
+                <span className="text-[10px] text-green-600 bg-green-100 px-2 py-0.5 rounded-full">
+                  Similarity: {surat.similarity}
+                </span>
               </div>
 
               <p className="text-right text-2xl font-arabic leading-relaxed text-gray-800 mb-4">
                 {surat.Teks_Arab}
               </p>
+              <p
+                className="text-sm text-gray-600 italic mb-2"
+                dangerouslySetInnerHTML={{
+                  __html: highlightKeywords(surat.Terjemahan, [searchQuery]),
+                }}
+              ></p>
 
+              <p className="text-sm text-gray-600 font-semibold">
+                Tafsir Jalalain:
+              </p>
+              <p
+                className="text-sm text-gray-600 italic mb-2"
+                dangerouslySetInnerHTML={{
+                  __html: highlightKeywords(surat.Tafsir_Jalalain, [
+                    searchQuery,
+                  ]),
+                }}
+              ></p>
+
+              <p className="text-sm text-gray-600 font-semibold">
+                Tafsir Mukhtasar:
+              </p>
               <p
                 className="text-sm text-gray-600 italic"
                 dangerouslySetInnerHTML={{
-                  __html: highlightKeywords(surat.Tafsir_Bersih, [searchQuery]),
+                  __html: highlightKeywords(surat.Tafsir_Mukhtasar, [
+                    searchQuery,
+                  ]),
                 }}
               ></p>
 

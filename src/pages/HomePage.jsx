@@ -27,6 +27,7 @@ export default function HomePage() {
         response.recommendations = response.recommendations.map((item) => ({
           ...item,
           Tafsir_Bersih: item.Terjemahan, // Pastikan ada properti Tafsir_Bersih
+          similarity: item.similarity?.toFixed(3), // dibulatkan 3 digit
         }));
 
         setRecommendations(response.recommendations);
@@ -73,6 +74,11 @@ export default function HomePage() {
                 <h3 className="text-lg font-semibold text-blue-800 mb-2">
                   {surat.Nama_Surah_Indo} ({surat.Surah})
                 </h3>
+                {surat.similarity && (
+                  <span className="text-[10px] text-green-600 bg-green-50 px-2 py-1 rounded-full">
+                    Similarity: {surat.similarity}
+                  </span>
+                )}
                 <div className="text-right text-2xl mt-2">
                   {surat.Teks_Arab}
                 </div>

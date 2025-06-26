@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import { fetchData } from "../networks/apiService";
+import SwitcherTafsir from "../components/SwitcherTafsir";
 
 export default function DetailSurahPage() {
   const { surah_number } = useParams();
@@ -10,10 +11,23 @@ export default function DetailSurahPage() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedTafsir, setSelectedTafsir] = useState("terjemahan");
 
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
+
+  const getTafsirByKey = (ayat, key) => {
+    console.log(key);
+    switch (key) {
+      case "jalalain":
+        return ayat.Tafsir_Jalalain || "";
+      case "mukhtasar":
+        return ayat.Tafsir_Mukhtasar || "";
+      default:
+        return ayat.Terjemahan || "";
+    }
+  };
 
   const fetchSurahDetail = async (surahNumber) => {
     try {
@@ -21,8 +35,8 @@ export default function DetailSurahPage() {
       const response = await fetchData(`/surah_detail/${surahNumber}`);
       if (response && response.surah_detail) {
         response.surah_detail.forEach((ayat) => {
-          ayat.Tafsir_Bersih = ayat.Terjemahan || "";
-        }); 
+          ayat.Tafsir_Bersih = getTafsirByKey(ayat, selectedTafsir);
+        });
         setData(response.surah_detail);
       } else {
         throw new Error("Data surah tidak ditemukan");
@@ -40,6 +54,15 @@ export default function DetailSurahPage() {
     if (page < 1 || page > Math.ceil(data.length / itemsPerPage)) return;
     setCurrentPage(page);
   };
+
+  useEffect(() => {
+    setData((prev) =>
+      prev.map((ayat) => ({
+        ...ayat,
+        Tafsir_Bersih: getTafsirByKey(ayat, selectedTafsir),
+      }))
+    );
+  }, [selectedTafsir]);
 
   useEffect(() => {
     fetchSurahDetail(surah_number);
@@ -96,6 +119,12 @@ export default function DetailSurahPage() {
       <h1 className="text-2xl font-bold mb-4">
         Surah {data[0].Nama_Surah_Indo} ({data[0].Surah})
       </h1>
+
+      {/* Switch Tafsir */}
+      <SwitcherTafsir
+        selectedTafsir={selectedTafsir}
+        setSelectedTafsir={setSelectedTafsir}
+      />
 
       <ul className="space-y-6">
         {currentItems.map((ayat) => (
