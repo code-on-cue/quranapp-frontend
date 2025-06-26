@@ -16,11 +16,11 @@ export default function SwitcherTafsir({ selectedTafsir, setSelectedTafsir }) {
         label="Jalalain"
       />
 
-      <ButtonTafsir
+      {/* <ButtonTafsir
         onClick={() => setSelectedTafsir("mukhtasar")}
         selected={selectedTafsir === "mukhtasar"}
         label="Mukhtasar"
-      />
+      /> */}
     </div>
   );
 }

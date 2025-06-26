@@ -115,7 +115,7 @@ export function SearchPage() {
                 }}
               ></p>
 
-              <p className="text-sm text-gray-600 font-semibold">
+              {/* <p className="text-sm text-gray-600 font-semibold">
                 Tafsir Mukhtasar:
               </p>
               <p
@@ -125,7 +125,7 @@ export function SearchPage() {
                     searchQuery,
                   ]),
                 }}
-              ></p>
+              ></p> */}
 
               <div className="mt-4 flex justify-end">
                 <button

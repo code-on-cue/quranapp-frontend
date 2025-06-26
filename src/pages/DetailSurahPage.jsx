@@ -22,8 +22,8 @@ export default function DetailSurahPage() {
     switch (key) {
       case "jalalain":
         return ayat.Tafsir_Jalalain || "";
-      case "mukhtasar":
-        return ayat.Tafsir_Mukhtasar || "";
+      // case "mukhtasar":
+      //   return ayat.Tafsir_Mukhtasar || "";
       default:
         return ayat.Terjemahan || "";
     }
