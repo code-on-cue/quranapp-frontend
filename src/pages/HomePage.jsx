@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import { postData } from "../networks/apiService";
 import { loadSearchHistory } from "../utils/save-history";
+import { useNavigate } from "react-router-dom";
 
 const appName = import.meta.env.VITE_APP_NAME;
 
 export default function HomePage() {
+  const navigate = useNavigate();
   const [recommendations, setRecommendations] = useState([]);
-  const [error, setError] = useState(null);
+  const [_error, setError] = useState(null);
 
   const fetchSuratRecommendation = async () => {
     try {
@@ -83,6 +85,27 @@ export default function HomePage() {
                   {surat.Teks_Arab}
                 </div>
                 <p className="text-gray-600">{surat.Tafsir_Bersih}</p>
+
+                {/* goto surah */}
+
+                <div className="mt-4 flex justify-end">
+                  <button
+                    onClick={() => {
+                      navigate(
+                        `/surah/${surat.Surah}?specific_ayah=${surat.Ayat}`,
+                        {
+                          state: {
+                            ayat: surat.Ayat,
+                            namaSurah: surat.Nama_Surah_Indo,
+                          },
+                        }
+                      );
+                    }}
+                    className="text-sm text-blue-600 hover:text-blue-800 font-medium transition"
+                  >
+                    Lihat Surah →
+                  </button>
+                </div>
               </div>
             ))}
           </div>
