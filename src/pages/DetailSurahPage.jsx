@@ -15,6 +15,7 @@ export default function DetailSurahPage() {
 
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
+  const [pageInput, setPageInput] = useState(1);
   const itemsPerPage = 10;
 
   const getTafsirByKey = (ayat, key) => {
@@ -53,6 +54,7 @@ export default function DetailSurahPage() {
     if (page > currentPage) window.scrollTo({ top: 0, behavior: "smooth" });
     if (page < 1 || page > Math.ceil(data.length / itemsPerPage)) return;
     setCurrentPage(page);
+    setPageInput(page);
   };
 
   useEffect(() => {
@@ -175,21 +177,29 @@ export default function DetailSurahPage() {
           type="number"
           min={1}
           max={totalPages}
-          value={currentPage}
+          value={pageInput}
           onChange={(e) => {
-            const page = Number(e.target.value);
-            if (page < 1) {
-              setCurrentPage(1);
-              return;
-            } else if (page > totalPages) {
-              setCurrentPage(totalPages);
-              return;
-            } else if (!isNaN(page)) {
-              // Only update if the input is a valid number
-              setCurrentPage(page);
-            } else {
-              // If input is not a number, reset to current page
-              setCurrentPage(currentPage);
+            console.log("Input changed:", e.target.value);
+            setPageInput(e.target.value);
+          }}
+          // on enter, change page
+          onKeyDown={(e) => {
+            console.log("Key pressed:", e.key);
+            if (e.key === "Enter") {
+              const page = Number(pageInput);
+              if (page < 1) {
+                setCurrentPage(1);
+                return;
+              } else if (page > totalPages) {
+                setCurrentPage(totalPages);
+                return;
+              } else if (!isNaN(page)) {
+                // Only update if the input is a valid number
+                setCurrentPage(page);
+              } else {
+                // If input is not a number, reset to current page
+                setCurrentPage(currentPage);
+              }
             }
           }}
           className="w-16 px-2 py-1 border rounded-lg text-center text-sm"
