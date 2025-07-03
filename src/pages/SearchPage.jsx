@@ -9,6 +9,7 @@ export function SearchPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [suratList, setSuratList] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
   // Debounce the search query to avoid too many API calls
   const debouncedSearchQuery = useDebounce(searchQuery, 1000);
@@ -16,6 +17,7 @@ export function SearchPage() {
   const fetchSuratList = async () => {
     console.log("Fetching surat list with query:", debouncedSearchQuery);
     setErrorMessage(""); // Reset error message on new search
+    setLoading(true);
     try {
       if (!debouncedSearchQuery) {
         setSuratList([]);
@@ -49,6 +51,8 @@ export function SearchPage() {
         error?.response?.data?.error || "Terjadi kesalahan saat mengambil data"
       );
       console.error("Error fetching surat list:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -69,7 +73,11 @@ export function SearchPage() {
         className="w-full p-3 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
-        {suratList.length === 0 ? (
+        {loading ? (
+          <div className="col-span-full text-center">
+            <p className="text-gray-500">Memuat data...</p>
+          </div>
+        ) : suratList.length === 0 ? (
           errorMessage ? (
             <p className="text-red-600">{errorMessage}</p>
           ) : (
